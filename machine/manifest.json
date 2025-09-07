@@ -1,0 +1,827 @@
+{
+  "projectName": "Agent Architect AI",
+  "description": "An AI-powered platform that transforms raw app ideas into structured, multi-stage build plans, complete with tasks suitable for AI coding agents and detailed blueprints for no-code platforms.",
+  "dataModels": [
+    {
+      "modelName": "User",
+      "fields": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "constraints": [
+            "primary key",
+            "default gen_random_uuid()"
+          ]
+        },
+        {
+          "name": "email",
+          "type": "text",
+          "constraints": [
+            "not null",
+            "unique"
+          ]
+        },
+        {
+          "name": "password_hash",
+          "type": "text",
+          "constraints": [
+            "not null"
+          ]
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "constraints": [
+            "not null",
+            "default now()"
+          ]
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "constraints": [
+            "not null",
+            "default now()"
+          ]
+        }
+      ]
+    },
+    {
+      "modelName": "AppIdea",
+      "fields": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "constraints": [
+            "primary key",
+            "default gen_random_uuid()"
+          ]
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "constraints": [
+            "not null",
+            "references User(id) on delete cascade"
+          ]
+        },
+        {
+          "name": "title",
+          "type": "text",
+          "constraints": [
+            "not null"
+          ]
+        },
+        {
+          "name": "purpose",
+          "type": "text",
+          "constraints": []
+        },
+        {
+          "name": "target_audience",
+          "type": "text",
+          "constraints": []
+        },
+        {
+          "name": "core_features_desc",
+          "type": "text",
+          "constraints": []
+        },
+        {
+          "name": "desired_tech_stack_desc",
+          "type": "text",
+          "constraints": []
+        },
+        {
+          "name": "existing_resources_desc",
+          "type": "text",
+          "constraints": []
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "constraints": [
+            "not null",
+            "default now()"
+          ]
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "constraints": [
+            "not null",
+            "default now()"
+          ]
+        }
+      ]
+    },
+    {
+      "modelName": "BuildPlan",
+      "fields": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "constraints": [
+            "primary key",
+            "default gen_random_uuid()"
+          ]
+        },
+        {
+          "name": "app_idea_id",
+          "type": "uuid",
+          "constraints": [
+            "not null",
+            "references AppIdea(id) on delete cascade"
+          ]
+        },
+        {
+          "name": "plan_name",
+          "type": "text",
+          "constraints": [
+            "not null"
+          ]
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "constraints": [
+            "not null",
+            "default 'draft'"
+          ]
+        },
+        {
+          "name": "current_revision_id",
+          "type": "uuid",
+          "constraints": [
+            "references PlanRevision(id) on delete set null"
+          ]
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "constraints": [
+            "not null",
+            "default now()"
+          ]
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "constraints": [
+            "not null",
+            "default now()"
+          ]
+        }
+      ],
+      "tableConstraints": [
+        "UNIQUE (app_idea_id, plan_name)"
+      ]
+    },
+    {
+      "modelName": "PlanRevision",
+      "fields": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "constraints": [
+            "primary key",
+            "default gen_random_uuid()"
+          ]
+        },
+        {
+          "name": "build_plan_id",
+          "type": "uuid",
+          "constraints": [
+            "not null",
+            "references BuildPlan(id) on delete cascade"
+          ]
+        },
+        {
+          "name": "revision_number",
+          "type": "integer",
+          "constraints": [
+            "not null"
+          ]
+        },
+        {
+          "name": "plan_content",
+          "type": "jsonb",
+          "constraints": [
+            "not null"
+          ]
+        },
+        {
+          "name": "generated_by_ai",
+          "type": "boolean",
+          "constraints": [
+            "not null"
+          ]
+        },
+        {
+          "name": "editor_user_id",
+          "type": "uuid",
+          "constraints": [
+            "references User(id) on delete set null"
+          ]
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "constraints": [
+            "not null",
+            "default now()"
+          ]
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "constraints": [
+            "not null",
+            "default now()"
+          ]
+        }
+      ],
+      "tableConstraints": [
+        "UNIQUE (build_plan_id, revision_number)"
+      ]
+    },
+    {
+      "id": "b914bb4f-e49b-4b3b-b7ca-b06082fc34db",
+      "modelName": "NewTable",
+      "fields": [
+        {
+          "id": "da6f643e-b48c-43eb-8b26-68307366da37",
+          "name": "id",
+          "type": "UUID",
+          "constraints": [
+            "PRIMARY KEY"
+          ]
+        }
+      ]
+    }
+  ],
+  "uiFlows": [
+    {
+      "flowName": "User Onboarding & App Idea Submission",
+      "steps": [
+        "User lands on homepage.",
+        "User signs up or logs in.",
+        "User navigates to 'New Idea' section.",
+        "User completes multi-step form for app idea details.",
+        "User submits the idea for AI-powered build plan generation.",
+        "User is redirected to the generated build plan visualization."
+      ]
+    },
+    {
+      "flowName": "Build Plan Management & Refinement",
+      "steps": [
+        "User views their dashboard with a list of app ideas and their build plans.",
+        "User selects an existing build plan.",
+        "User views the interactive visualization of the plan.",
+        "User reviews plan details, phases, and individual tasks.",
+        "User clicks 'Refine Plan' to modify tasks, add new ones, or adjust technologies.",
+        "User submits refinements, triggering a new plan revision.",
+        "User exports tasks for AI coding agents (e.g., VSCode snippets).",
+        "User exports blueprints/checklists for no-code platforms."
+      ]
+    },
+    {
+      "flowName": "Account Management",
+      "steps": [
+        "User accesses account settings from the dashboard.",
+        "User views or updates their profile information.",
+        "User manages authentication settings (e.g., change password)."
+      ]
+    }
+  ],
+  "uiSchema": {
+    "pages": [
+      {
+        "id": "homepage",
+        "name": "Homepage / Landing Page",
+        "components": [
+          {
+            "id": "header-unauthenticated",
+            "name": "Header (Unauthenticated)",
+            "enabled": true,
+            "specification": "Create a responsive header component with a logo 'Agent Architect AI' on the left, primary navigation links (Home, Features, Pricing) in the center, and 'Login' and 'Sign Up' buttons on the right. Use a clean, modern design with Tailwind CSS."
+          },
+          {
+            "id": "hero-section",
+            "name": "Hero Section",
+            "enabled": true,
+            "specification": "Design a prominent hero section with a large, impactful title 'Transform Your Ideas into Actionable AI Build Plans', a compelling subtitle, and a primary call-to-action button 'Get Started - It's Free'. Include an illustrative graphic or animation relevant to AI and software development. Ensure responsiveness for all screen sizes."
+          },
+          {
+            "id": "feature-showcase",
+            "name": "Feature Showcase",
+            "enabled": true,
+            "specification": "Develop a section showcasing key features like 'Intuitive Idea Input', 'AI-Powered Generation', 'Interactive Visualization', and 'Agent Export'. Each feature should have a clear title, a brief description, and an icon or small illustration. Arrange them in a grid or visually appealing layout. Use Tailwind CSS for styling."
+          },
+          {
+            "id": "footer",
+            "name": "Footer",
+            "enabled": true,
+            "specification": "Build a standard footer with copyright information, privacy policy, terms of service links, and social media icons. Keep it minimal and professional using Tailwind CSS."
+          }
+        ]
+      },
+      {
+        "id": "auth-page",
+        "name": "Authentication Page (Login/Signup)",
+        "components": [
+          {
+            "id": "auth-form",
+            "name": "Authentication Form",
+            "enabled": true,
+            "specification": "Create a clean, centered card-style form component that can switch between 'Login' and 'Sign Up' states. For Login, include email and password fields, a 'Forgot Password' link, and a submit button. For Sign Up, include email, password, confirm password fields, and a submit button. Include a clear toggle or link to switch between Login and Sign Up. Use robust form validation and Tailwind CSS for styling."
+          }
+        ]
+      },
+      {
+        "id": "dashboard",
+        "name": "Dashboard",
+        "components": [
+          {
+            "id": "header-authenticated",
+            "name": "Header (Authenticated)",
+            "enabled": true,
+            "specification": "Develop a responsive header for authenticated users. It should include the 'Agent Architect AI' logo on the left, a 'New Idea' button, and a user profile dropdown menu on the right (with options like 'My Profile', 'Settings', 'Logout'). Use a consistent theme with the rest of the application using Tailwind CSS."
+          },
+          {
+            "id": "app-idea-list",
+            "name": "App Idea List/Grid",
+            "enabled": true,
+            "specification": "Create a responsive list or grid display for user's app ideas. Each item should be a card showing the 'App Idea Title', 'Current Build Plan Status' (e.g., Draft, Generated, Refined), and 'Last Updated' timestamp. Each card should be clickable to view the detailed build plan. Include an empty state message 'No app ideas yet? Start a new one!' with a prominent button."
+          }
+        ]
+      },
+      {
+        "id": "new-app-idea-form-page",
+        "name": "New App Idea Form Page",
+        "components": [
+          {
+            "id": "multi-step-form-container",
+            "name": "Multi-Step Form Container",
+            "enabled": true,
+            "specification": "Build a multi-step form layout. It needs a clear progress indicator (e.g., numbered steps or a progress bar) at the top. Each step should present relevant input fields for 'Purpose', 'Target Audience', 'Core Features', 'Desired Tech Stack', and 'Existing Resources'. Include 'Back' and 'Next' navigation buttons, and a 'Submit' button on the final step. Ensure input fields are clearly labeled and have appropriate input types (e.g., textarea for longer descriptions). Use Tailwind CSS for styling and responsiveness."
+          }
+        ]
+      },
+      {
+        "id": "build-plan-view-page",
+        "name": "Build Plan View Page",
+        "components": [
+          {
+            "id": "plan-details-header",
+            "name": "Plan Details Header",
+            "enabled": true,
+            "specification": "Display the 'App Idea Title' and 'Current Build Plan Name/Status' prominently at the top of the page. Include action buttons like 'Refine Plan', 'Export Tasks', and 'Generate No-Code Blueprints'. Use a clean, functional layout with Tailwind CSS."
+          },
+          {
+            "id": "interactive-plan-visualization",
+            "name": "Interactive Plan Visualization",
+            "enabled": true,
+            "specification": "Create an interactive component to visualize the AI-generated build plan. This could be a timeline, a Kanban board, or a hierarchical tree view. It should clearly show phases, tasks, dependencies, and suggested technologies. Each task should be clickable to reveal more details in a sidebar or modal. Allow for drag-and-drop reordering/rephasing if technically feasible. Use a library like React Flow, D3, or a custom component with Tailwind CSS."
+          },
+          {
+            "id": "task-details-sidebar",
+            "name": "Task Details Sidebar/Modal",
+            "enabled": true,
+            "specification": "Design a sidebar or modal that appears when a task in the visualization is clicked. It should display detailed information about the selected task: title, description, estimated effort, assigned technology, suggested AI agent prompt/no-code platform hint, and options to edit or mark complete. Include a save/cancel functionality if editing is allowed within the sidebar. Use Tailwind CSS for styling."
+          }
+        ]
+      },
+      {
+        "id": "settings-page",
+        "name": "Settings / Profile Page",
+        "components": [
+          {
+            "id": "profile-settings-form",
+            "name": "Profile & Account Settings Form",
+            "enabled": true,
+            "specification": "Develop a multi-section form for user settings. Sections should include 'Profile Information' (e.g., name, email), 'Password Settings' (old password, new password, confirm new password), and potentially 'Subscription Details' (placeholder for future). Each section should have its own save button. Use a tabbed or accordion interface for navigation between sections. Apply Tailwind CSS for a professional look."
+          }
+        ]
+      },
+      {
+        "id": "b3a2f1e0-d9c8-7b6a-5432-1fedcba98765",
+        "name": "Plan History",
+        "components": [
+          {
+            "id": "c4b3a2f1-e0d9-8c7b-6a54-321fedcba987",
+            "name": "Build Plan Version List",
+            "enabled": true,
+            "specification": "A sidebar or main content area component displaying a chronological list of all saved versions for the current user's build plan. Each list item should show the version number or timestamp, a brief identifier (e.g., 'Initial AI Plan', 'User Refinement 1'), and an action button to 'View' or 'Restore' that specific version. The currently active version should be clearly highlighted."
+          },
+          {
+            "id": "d5c4b3a2-f1e0-9d8c-7b6a-54321fedcba9",
+            "name": "Version Comparison Viewer",
+            "enabled": true,
+            "specification": "A main content area component that, when two plan versions are selected from the 'Build Plan Version List', displays a side-by-side comparison of their key attributes. This could include a summary of tasks added/removed, technology changes, and estimated effort differences. Highlight changes clearly using visual cues like color coding for additions, deletions, and modifications."
+          },
+          {
+            "id": "e6d5c4b3-a2f1-0e9d-8c7b-6a54321fedcba",
+            "name": "Restore Plan Version Button",
+            "enabled": true,
+            "specification": "A prominent button labeled 'Restore This Version' that appears when a past version is being viewed or compared. Clicking this button should prompt a confirmation dialog, then replace the current active build plan with the selected historical version, creating a new entry in the version history."
+          }
+        ]
+      },
+      {
+        "id": "f7e6d5c4-b3a2-1f0e-9d8c-7b6a54321fed",
+        "name": "Integrations",
+        "components": [
+          {
+            "id": "08f7e6d5-c4b3-2a1f-0e9d-8c7b6a54321f",
+            "name": "OpenAI API Key Management",
+            "enabled": true,
+            "specification": "A card component dedicated to OpenAI integration. It should display the current status (connected/disconnected), an input field for the OpenAI API Key (masked), and 'Save' and 'Test Connection' buttons. Provide clear instructions on where to obtain the API key and highlight the benefits of connecting."
+          },
+          {
+            "id": "1908f7e6-d5c4-3b2a-1f0e-9d8c7b6a5432",
+            "name": "AI Coding Agent Configuration",
+            "enabled": true,
+            "specification": "A section or card component detailing integration with AI coding agents like VSCode Copilot/Cody. It should clearly state the target agent(s), provide instructions for installing any necessary extensions or configurations, and offer a 'Check Status' button to verify the setup. Explain how generated tasks are exported/integrated."
+          },
+          {
+            "id": "2a1908f7-e6d5-4c3b-2a1f-0e9d8c7b6a54",
+            "name": "No-Code Platform Connectors",
+            "enabled": true,
+            "specification": "A component listing supported no-code platforms (e.g., Webflow, Bubble, Adalo). For each platform, display its logo, connection status (connected/not connected), and a button to 'Connect' or 'Manage' the integration. The 'Connect' action should initiate a platform-specific OAuth flow or prompt for API keys/webhooks as required by the platform. Include a brief description of what features are enabled by each integration."
+          }
+        ]
+      },
+      {
+        "id": "3b2a1908-f7e6-5d4c-3b2a-1f0e9d8c7b6a",
+        "name": "Templates & Examples",
+        "components": [
+          {
+            "id": "4c3b2a19-08f7-6e5d-4c3b-2a1f0e9d8c7b",
+            "name": "App Idea Template Gallery",
+            "enabled": true,
+            "specification": "A grid or carousel component showcasing a collection of pre-defined app idea templates. Each template card should include a title (e.g., 'E-commerce Store', 'Task Manager SaaS'), a concise description of the app, key features, suggested tech stack, and a prominent 'Use Template' button. Clicking 'Use Template' should pre-fill the 'New App Idea Form Page' with the template's details."
+          },
+          {
+            "id": "5d4c3b2a-1908-7f6e-5d4c-3b2a1f0e9d8c",
+            "name": "AI Build Plan Showcase",
+            "enabled": true,
+            "specification": "A section displaying a curated list of example AI-generated build plans. Each example should be presented as a card with a title (e.g., 'Detailed E-commerce Build Plan', 'Simple Blog App - No-Code Focus'), a brief summary of the plan's scope, and a 'View Plan' button. Clicking 'View Plan' should navigate to a read-only version of the 'Build Plan View Page' for that example, demonstrating the platform's output capabilities."
+          }
+        ]
+      }
+    ]
+  },
+  "apiEndpoints": [
+    {
+      "method": "POST",
+      "path": "/api/auth/register",
+      "description": "Registers a new user account.",
+      "id": "0c3e49e7-796a-4476-b25a-6b153f88d6d8"
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/login",
+      "description": "Authenticates a user and returns an authentication token (JWT).",
+      "id": "bb12c697-c0f5-428a-867d-69db77594609"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me",
+      "description": "Retrieves the profile information of the authenticated user.",
+      "id": "6cdb9a26-4bcd-4786-8f74-4097b12d3f21"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/users/me",
+      "description": "Updates the profile information of the authenticated user.",
+      "id": "eff2597e-dc8e-4136-9cef-0ce935dbc3e6"
+    },
+    {
+      "method": "POST",
+      "path": "/api/app-ideas",
+      "description": "Creates a new app idea based on user input.",
+      "id": "87c8b00a-6e9c-4dab-980f-6dadfaa21e35"
+    },
+    {
+      "method": "GET",
+      "path": "/api/app-ideas",
+      "description": "Retrieves a list of all app ideas belonging to the authenticated user.",
+      "id": "d80ae496-5719-4c26-928b-1b628a8dd150"
+    },
+    {
+      "method": "GET",
+      "path": "/api/app-ideas/:id",
+      "description": "Retrieves the details of a specific app idea by its ID.",
+      "id": "7990b75e-bf18-484d-affe-cfa76518a1cb"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/app-ideas/:id",
+      "description": "Updates the details of a specific app idea.",
+      "id": "031621bc-38c2-499b-bb78-44ed8602655a"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/app-ideas/:id",
+      "description": "Deletes a specific app idea and all associated build plans and revisions.",
+      "id": "49754426-fd2e-4f46-8d3b-2b5e01a31726"
+    },
+    {
+      "method": "POST",
+      "path": "/api/app-ideas/:appIdeaId/generate-plan",
+      "description": "Triggers the AI engine to generate a new build plan and its initial revision for a given app idea.",
+      "id": "ebfcd140-809f-41bb-8fd9-3251a1ce5895"
+    },
+    {
+      "method": "GET",
+      "path": "/api/app-ideas/:appIdeaId/build-plans",
+      "description": "Retrieves a list of all build plans associated with a specific app idea.",
+      "id": "869f2c13-5794-4ccb-9334-f9b81bd2feca"
+    },
+    {
+      "method": "GET",
+      "path": "/api/build-plans/:id",
+      "description": "Retrieves a specific build plan by its ID, including the content of its current revision.",
+      "id": "6682b66b-a2ad-428d-a929-2cc98db2ba57"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/build-plans/:id",
+      "description": "Updates metadata for a specific build plan, such as its status or current active revision.",
+      "id": "1f9110ba-a03c-46ac-87bb-c6e7feb5fde1"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/build-plans/:id",
+      "description": "Deletes a specific build plan and all its associated revisions.",
+      "id": "8217916c-56ae-454b-a7c6-461f49769ac8"
+    },
+    {
+      "method": "GET",
+      "path": "/api/build-plans/:buildPlanId/revisions",
+      "description": "Retrieves a list of all revisions for a specific build plan.",
+      "id": "4a1fb168-5bb7-4042-a40a-03b5ba608281"
+    },
+    {
+      "method": "GET",
+      "path": "/api/build-plans/:buildPlanId/revisions/:id",
+      "description": "Retrieves the detailed content of a specific plan revision.",
+      "id": "aab9ef89-9ae9-41c8-bdd2-f4e72c4dba58"
+    },
+    {
+      "method": "POST",
+      "path": "/api/build-plans/:buildPlanId/revisions",
+      "description": "Creates a new plan revision for a build plan, typically after user refinement or a new AI generation. The new revision becomes the current active revision.",
+      "id": "414ef025-7429-420a-8048-e312f83402b8"
+    },
+    {
+      "method": "GET",
+      "path": "/api/build-plans/:buildPlanId/revisions/:id/export",
+      "description": "Exports the content of a specific plan revision in a format suitable for AI coding agents or no-code platforms.",
+      "id": "47001ada-da8a-492a-a7a6-08e223c5883a"
+    }
+  ],
+  "stateManagement": {
+    "library": "Redux Toolkit",
+    "slices": [
+      {
+        "name": "auth",
+        "properties": [],
+        "actions": [],
+        "id": "23b6903d-d2ed-44d7-964b-46ae417b11a8"
+      },
+      {
+        "name": "appIdeas",
+        "properties": [],
+        "actions": [],
+        "id": "b8942fa6-069a-4af0-8c1b-7b6267ed3863"
+      },
+      {
+        "name": "currentAppPlan",
+        "properties": [],
+        "actions": [],
+        "id": "172fd06d-59e4-47ef-abc3-8657dd439fbe"
+      },
+      {
+        "name": "planRevisionsHistory",
+        "properties": [],
+        "actions": [],
+        "id": "ee77f870-d88e-4d17-91bf-8d61e92c761a"
+      },
+      {
+        "name": "ui",
+        "properties": [],
+        "actions": [],
+        "id": "64a13b4d-de42-4360-8ca4-2411e3766f07"
+      },
+      {
+        "name": "integrations",
+        "properties": [],
+        "actions": [],
+        "id": "58797c20-39c4-4195-9c3e-ae89f41d0e75"
+      }
+    ]
+  },
+  "architectureNotes": "The project uses a structured approach for AI agent interaction. The `/machine` directory houses all machine-readable project artifacts crucial for AI agents: `manifest.json` defines the core project configuration, data models, and UI flows; `state.json` tracks the current build progress and environment state; and the `build_plan/` directory contains a series of granular, sequential JSONL files, each representing a distinct build stage with specific tasks for AI agents. The `/user` directory contains the actual source code and user-facing documentation, reflecting the output of the AI-driven build process.",
+  "stages": [
+    {
+      "id": "project_setup",
+      "title": "Project Setup and Initial Configuration",
+      "file": "/machine/build_plan/000_project_setup.jsonl"
+    },
+    {
+      "id": "database_setup",
+      "title": "Supabase Database & Schema Migration",
+      "file": "/machine/build_plan/001_database_setup.jsonl"
+    },
+    {
+      "id": "authentication_service",
+      "title": "User Authentication & API Routes (Supabase)",
+      "file": "/machine/build_plan/002_authentication_service.jsonl"
+    },
+    {
+      "id": "app_idea_management_backend",
+      "title": "App Idea Management API",
+      "file": "/machine/build_plan/003_app_idea_management_backend.jsonl"
+    },
+    {
+      "id": "ai_build_plan_generation_backend",
+      "title": "AI Build Plan Generation Engine (OpenAI)",
+      "file": "/machine/build_plan/004_ai_build_plan_generation_backend.jsonl"
+    },
+    {
+      "id": "build_plan_management_backend",
+      "title": "Build Plan & Revision Management API",
+      "file": "/machine/build_plan/005_build_plan_management_backend.jsonl"
+    },
+    {
+      "id": "core_frontend_setup",
+      "title": "Next.js Frontend & Tailwind CSS Initialization",
+      "file": "/machine/build_plan/006_core_frontend_setup.jsonl"
+    },
+    {
+      "id": "homepage_components",
+      "title": "Homepage / Landing Page Components",
+      "file": "/machine/build_plan/007_homepage_components.jsonl"
+    },
+    {
+      "id": "auth_pages_and_components",
+      "title": "Authentication Pages & Forms",
+      "file": "/machine/build_plan/008_auth_pages_and_components.jsonl"
+    },
+    {
+      "id": "dashboard_components",
+      "title": "Dashboard Pages & App Idea List",
+      "file": "/machine/build_plan/009_dashboard_components.jsonl"
+    },
+    {
+      "id": "new_app_idea_form_components",
+      "title": "New App Idea Multi-Step Form",
+      "file": "/machine/build_plan/010_new_app_idea_form_components.jsonl"
+    },
+    {
+      "id": "build_plan_view_components",
+      "title": "Build Plan Visualization & Details",
+      "file": "/machine/build_plan/011_build_plan_view_components.jsonl"
+    },
+    {
+      "id": "settings_page_components",
+      "title": "User Settings & Profile Page",
+      "file": "/machine/build_plan/012_settings_page_components.jsonl"
+    },
+    {
+      "id": "agent_export_and_no_code_blueprints",
+      "title": "Agent Task Export & No-Code Blueprint Generation",
+      "file": "/machine/build_plan/013_agent_export_and_no_code_blueprints.jsonl"
+    },
+    {
+      "id": "testing_setup",
+      "title": "Testing Setup (Jest & Cypress)",
+      "file": "/machine/build_plan/014_testing_setup.jsonl"
+    },
+    {
+      "id": "finalize_dependencies",
+      "title": "Finalize Dependencies",
+      "file": "/machine/build_plan/999_finalize_dependencies.jsonl"
+    }
+  ],
+  "fileTree": {
+    ".github": {
+      "workflows": {
+        "deploy.yml": {}
+      }
+    },
+    "machine": {
+      "manifest.json": {},
+      "state.json": {},
+      "build_plan": {}
+    },
+    "user": {
+      "public": {
+        "favicon.ico": {},
+        "vercel.svg": {}
+      },
+      "src": {
+        "app": {
+          "layout.tsx": {},
+          "page.tsx": {},
+          "auth": {
+            "login": {
+              "page.tsx": {}
+            },
+            "signup": {
+              "page.tsx": {}
+            }
+          },
+          "dashboard": {
+            "page.tsx": {}
+          },
+          "new-idea": {
+            "page.tsx": {}
+          },
+          "plan": {
+            "[id]": {
+              "page.tsx": {}
+            }
+          },
+          "settings": {
+            "page.tsx": {}
+          },
+          "api": {
+            "auth": {
+              "route.ts": {}
+            },
+            "ideas": {
+              "route.ts": {}
+            },
+            "plans": {
+              "route.ts": {}
+            },
+            "ai": {
+              "generate-plan": {
+                "route.ts": {}
+              }
+            }
+          }
+        },
+        "components": {},
+        "lib": {
+          "supabase": {
+            "client.ts": {},
+            "server.ts": {}
+          },
+          "openai": {
+            "index.ts": {}
+          },
+          "utils": {
+            "index.ts": {}
+          }
+        },
+        "hooks": {
+          "index.ts": {}
+        },
+        "styles": {
+          "globals.css": {}
+        },
+        "types": {
+          "index.d.ts": {}
+        },
+        "tests": {
+          "unit": {},
+          "e2e": {}
+        }
+      },
+      ".env.local": {},
+      "README.md": {},
+      "package.json": {},
+      "tsconfig.json": {},
+      "next.config.js": {},
+      "postcss.config.js": {},
+      "tailwind.config.js": {},
+      ".gitignore": {},
+      ".prettierrc": {}
+    }
+  },
+  "version": "0.1.0",
+  "createdBy": "BridgeBuilder v1.0",
+  "presets": [
+    "Startup MVP",
+    "Developer Tool"
+  ],
+  "metadata": {
+    "projectType": "Web",
+    "architecture": "Frontend+Backend",
+    "platform": "Vercel",
+    "datastore": "Postgres",
+    "auth": "JWT",
+    "stack": "Next.js + Supabase",
+    "targetAgent": "VSCode (Copilot/Cody)",
+    "ciCdProvider": "GitHub Actions for Vercel",
+    "unitTestFramework": "Jest",
+    "e2eTestFramework": "Cypress"
+  },
+  "integrations": [
+    "OpenAI"
+  ]
+}
