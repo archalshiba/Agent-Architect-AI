@@ -13,6 +13,7 @@ Existing Resources: ${appIdea.existing_resources_desc || 'N/A'}
 
 JSON Output Schema:
 ```json
+
 {
   "plan_name": "string", // A concise name for the generated plan
   "phases": [
