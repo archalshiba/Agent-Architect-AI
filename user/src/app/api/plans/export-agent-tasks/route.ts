@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { BuildPlan } from '@/types';
 
 export async function POST(req: NextRequest) {
   const supabase = createServerComponentClient({ cookies });
