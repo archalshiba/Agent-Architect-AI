@@ -10,7 +10,6 @@ Desired Tech Stack: ${appIdea.desired_tech_stack_desc || 'N/A'}
 Existing Resources: ${appIdea.existing_resources_desc || 'N/A'}
 
 JSON Output Schema:
-```json
 {
   "plan_name": "string", // A concise name for the generated plan
   "phases": [
@@ -33,7 +32,6 @@ JSON Output Schema:
     }
   ]
 }
-```
 
 Instructions:
 - Generate a comprehensive plan with logical phases and detailed tasks.
@@ -45,7 +43,6 @@ Instructions:
 - The entire output must be a valid JSON object, and nothing else. Do not include any conversational text or markdown outside the JSON.
 
 Begin the JSON output:
-```json
 {
   "plan_name": "${appIdea.title} Build Plan",
   "phases": [
