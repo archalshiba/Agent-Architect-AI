@@ -27,6 +27,7 @@ export interface BuildPlan {
   current_revision_id?: string;
   created_at: string;
   updated_at: string;
+  current_revision?: PlanRevision;
 }
 
 export interface PlanRevision {

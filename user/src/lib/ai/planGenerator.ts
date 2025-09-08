@@ -1,9 +1,9 @@
 import openai from '../../lib/openai';
-import { buildPlanGenerationPrompt } from './promptBuilder';
+import { buildPrompt } from './promptBuilder';
 import { AppIdea } from '../../types';
 
 export async function generateBuildPlan(appIdea: AppIdea): Promise<any> {
-  const prompt = await buildPlanGenerationPrompt(appIdea);
+  const prompt = buildPrompt(appIdea);
 
   try {
     const completion = await openai.chat.completions.create({
