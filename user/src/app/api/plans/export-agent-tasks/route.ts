@@ -24,6 +24,10 @@ export async function POST(req: NextRequest) {
       `
       id,
       plan_name,
+      app_idea_id,
+      status,
+      created_at,
+      updated_at,
       current_revision:PlanRevision(*)
     `)
     .eq('id', buildPlanId)
