@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Fetch the BuildPlan and its latest PlanRevision
-  const { data: buildPlan, error: buildPlanError } = await supabase
+  const { data: buildPlanData, error: buildPlanError } = await supabase
     .from('build_plans')
     .select(
       `
@@ -27,6 +27,8 @@ export async function POST(req: NextRequest) {
     `)
     .eq('id', buildPlanId)
     .single();
+
+  const buildPlan = buildPlanData as BuildPlan;
 
   if (buildPlanError || !buildPlan) {
     return NextResponse.json({ error: 'Build plan not found' }, { status: 404 });
