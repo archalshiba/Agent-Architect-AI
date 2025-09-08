@@ -1,5 +1,5 @@
 export async function buildPlanGenerationPrompt(appIdea: AppIdea): Promise<string> {
-  const prompt = `You are an expert software architect and project manager. Your task is to generate a detailed, multi-phase build plan for a software application based on the provided app idea. The plan should be structured in JSON format, adhering strictly to the schema provided below.
+  return `You are an expert software architect and project manager. Your task is to generate a detailed, multi-phase build plan for a software application based on the provided app idea. The plan should be structured in JSON format, adhering strictly to the schema provided below.
 
 App Idea Details:
 Title: ${appIdea.title}
