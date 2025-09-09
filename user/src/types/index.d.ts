@@ -31,6 +31,8 @@ export interface BuildPlan {
 }
 
 export interface PlanRevision {
+  notes: any;
+  createdAt: any;
   id: string;
   build_plan_id: string;
   revision_number: number;
