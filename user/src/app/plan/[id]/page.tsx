@@ -100,8 +100,7 @@ export default function BuildPlanViewPage() {
           <BuildPlanDetailsHeader
             appIdeaTitle={appIdeaTitle}
             planName={buildPlan.plan_name}
-            planStatus={buildPlan.status}
-          />
+            planStatus={buildPlan.status} buildPlanId={''}          />
           <InteractiveBuildPlanVisualization
             buildPlanContent={buildPlan.current_revision.plan_content}
             onTaskClick={handleTaskClick}
